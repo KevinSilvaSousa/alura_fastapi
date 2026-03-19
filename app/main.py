@@ -29,3 +29,4 @@ async def front_page():
     </html>
     """
      return html_content
+

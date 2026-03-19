@@ -1,0 +1,28 @@
+GET http://127.0.0.1:8000/clientes
+
+###
+
+GET http://127.0.0.1:8000/clientes/1
+
+
+###
+POST http://127.0.0.1:8000/clientes
+Content-Type: application/json
+
+{
+    "nome": "Kevin",
+    "email": "kevin@gmail.com",
+    "telefone": "34123456789"
+}
+###
+PUT http://127.0.0.1:8000/clientes/1
+Content-Type: application/json
+
+{
+    "nome": "Kevin Sousa",
+    "email": "kevin@gmail.com",
+    "telefone": "34123456789"
+}
+
+###
+DELETE http://127.0.0.1:8000/clientes/1
