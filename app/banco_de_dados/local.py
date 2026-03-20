@@ -6,7 +6,6 @@ class BancoDeDadosLocal():
         self.nome_arquivo = nome_arquivo
         self.inicializar_banco()
 
-    
     @contextmanager
     def conectar(self):
         conexao = sqlite3.connect(self.nome_arquivo)
@@ -23,13 +22,20 @@ class BancoDeDadosLocal():
         with self.conectar() as conexao:
             cursor = conexao.cursor()
             cursor.execute('''
-                CREATE TABLE IF NOT EXISTS clientes(
-                           id INTEGER PRIMARY KEY AUTOINCREMENT,
-                           nome TEXT NOT NULL,
-                           email TEXT NOT NULL,
-                           telefone TEXT NOT NULL
-                           )
-
-                ''')
-            
+                CREATE TABLE IF NOT EXISTS clientes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nome TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    telefone TEXT NOT NULL
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS clientes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nome TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    senha TEXT NOT NULL
+                )
+            ''')
+        
         print("Banco de dados inicializado")
