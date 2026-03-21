@@ -1,0 +1,24 @@
+Quando você cria um endpoint com async def, está dizendo ao FastAPI: 
+"essa função é assíncrona nativa e pode liberar o controle enquanto espera por I/O". 
+Isso significa que, se você fizer uma chamada a um banco de dados com await, uma requisição HTTP com httpx, ou qualquer operação que suporte await, o servidor não vai ficar bloqueado esperando a resposta. 
+Em vez disso, ele pode processar outras requisições enquanto aguarda. 
+Esse modelo é chamado de concorrência cooperativa e é extremamente eficiente para operações de I/O 
+(leitura de arquivos, chamadas de API, queries em banco de dados). 
+Por outro lado, quando você usa apenas def, o FastAPI automaticamente executa essa função em um threadpool separado 
+(usando o run_in_executor do asyncio), para que ela não bloqueie o loop de eventos principal. 
+Isso é perfeito para operações CPU-bound ou quando você está usando bibliotecas que não suportam async (como algumas versões antigas de ORMs).
+
+Agora vem a armadilha: 
+e se você criar um async def mas colocar dentro dele uma operação bloqueante (como time.sleep(), requests.get() ou uma query com SQLAlchemy síncrono)? 
+Aí você tem o pior dos dois mundos. 
+O FastAPI vai tratar a função como assíncrona, mas como ela não está realmente liberando controle com await, ela bloqueia o loop de eventos e trava o processamento de outras requisições. 
+É como ter uma fila única de atendimento onde o atendente para tudo para esperar uma ligação — ninguém mais é atendido até ela terminar. A
+regra de ouro é: se você usa async def, certifique-se de que todas as operações I/O dentro dela também sejam assíncronas (await) ou CPU-leves. 
+Se você precisa usar uma biblioteca síncrona, use def normal ou rode a operação bloqueante em uma thread com await asyncio.to_thread().
+
+No mercado, saber quando e como usar assincronismo corretamente é um diferencial enorme. 
+Empresas que lidam com alta carga de requisições (fintechs, e-commerces, plataformas SaaS) valorizam profissionais que sabem escalar sistemas sem desperdiçar recursos. 
+A dica de ouro? Meça antes de otimizar, mas sempre escolha conscientemente entre async def e def. 
+Use async def quando você tem I/O assíncrono (banco de dados com motor async, chamadas HTTP com httpx, filas com aiormq). 
+Use def quando tem processamento pesado de CPU ou bibliotecas síncronas. E se precisar misturar, isole a operação bloqueante em uma thread. 
+Dominar isso te coloca à frente de 80% dos desenvolvedores Python, e seus usuários vão agradecer pela velocidade.
